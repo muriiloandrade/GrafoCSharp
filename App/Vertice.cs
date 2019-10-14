@@ -5,13 +5,13 @@ namespace GraphApp
 {
     class Vertice
     {
-        private string nomeVertice { get; set; }
-        private Guid guidCode { get; set; }
+        internal string nomeVertice { get; set; }
+        internal Guid guidCode { get; set; }
 
-        Vertice(string nome)
+        public Vertice(string nome)
         {
             this.nomeVertice = nome;
-            this.guidCode = new Guid();
+            this.guidCode = Guid.NewGuid();
         }
         
         public override bool Equals(object obj)
@@ -19,7 +19,7 @@ namespace GraphApp
             return Equals(obj as Vertice);
         }
 
-        public bool Equals(Vertice outroVertice)
+        internal bool Equals(Vertice outroVertice)
         {
             if (outroVertice == null)
             {
@@ -27,8 +27,7 @@ namespace GraphApp
                 return false;
             }
 
-            return this.guidCode.Equals(outroVertice.guidCode) &&
-                   this.nomeVertice.Equals(outroVertice.nomeVertice);
+            return this.nomeVertice.Equals(outroVertice.nomeVertice);
         }
 
         public override int GetHashCode()

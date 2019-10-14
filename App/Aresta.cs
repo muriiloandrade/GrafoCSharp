@@ -8,17 +8,17 @@ namespace GraphApp
 {
     class Aresta
     {
-        Vertice vInicial;
-        Vertice vFinal;
-        private Guid guidCode { get; set; }
-        private string nomeAresta { get; set; }
+        internal Vertice vInicial;
+        internal Vertice vFinal;
+        internal Guid guidCode { get; set; }
+        internal string nomeAresta { get; set; }
 
-        Aresta(Vertice inicial, Vertice final, String nome)
+        public Aresta(Vertice inicial, Vertice final, String nome)
         {
             this.vInicial = inicial;
             this.vFinal = final;
             this.nomeAresta = nome;
-            this.guidCode = new Guid();
+            this.guidCode = Guid.NewGuid();
         }
         
         public override bool Equals(object obj)
@@ -26,7 +26,7 @@ namespace GraphApp
             return Equals(obj as Aresta);
         }
 
-        public bool Equals(Aresta outraAresta)
+        internal bool Equals(Aresta outraAresta)
         {
             if (outraAresta == null)
             {

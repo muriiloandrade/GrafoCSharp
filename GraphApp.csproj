@@ -48,6 +48,7 @@
   <ItemGroup>
     <Compile Include="App\Aresta.cs" />
     <Compile Include="App\Grafo.cs" />
+    <Compile Include="App\GraphJSON.cs" />
     <Compile Include="App\MainGraph.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="App\Vertice.cs" />

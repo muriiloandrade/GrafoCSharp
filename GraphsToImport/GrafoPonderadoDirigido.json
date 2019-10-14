@@ -1,3 +1,109 @@
 {
-
+  "nomeGrafo": "Ponderado e dirigido",
+  "ponderado": true,
+  "dirigido": true,
+  "vertices": [
+    {
+      "guidCode": null,
+      "nomeVertice": "A"
+    },
+    {
+      "guidCode": null,
+      "nomeVertice": "B"
+    },
+    {
+      "guidCode": null,
+      "nomeVertice": "C"
+    },
+    {
+      "guidCode": null,
+      "nomeVertice": "D"
+    },
+    {
+      "guidCode": null,
+      "nomeVertice": "E"
+    },
+    {
+      "guidCode": null,
+      "nomeVertice": "F"
+    },
+    {
+      "guidCode": null,
+      "nomeVertice": "G"
+    }
+  ],
+  "arestas": [
+    {
+      "vInicial": "A",
+      "vFinal": "C",
+      "nomeAresta": "AC",
+      "guidCode": null
+    },
+    {
+      "vInicial": "B",
+      "vFinal": "C",
+      "nomeAresta": "BC",
+      "guidCode": null
+    },
+    {
+      "vInicial": "C",
+      "vFinal": "B",
+      "nomeAresta": "CB",
+      "guidCode": null
+    },
+    {
+      "vInicial": "A",
+      "vFinal": "D",
+      "nomeAresta": "AD",
+      "guidCode": null
+    },
+    {
+      "vInicial": "E",
+      "vFinal": "D",
+      "nomeAresta": "ED",
+      "guidCode": null
+    },
+    {
+      "vInicial": "D",
+      "vFinal": "F",
+      "nomeAresta": "DF",
+      "guidCode": null
+    },
+    {
+      "vInicial": "F",
+      "vFinal": "G",
+      "nomeAresta": "FG",
+      "guidCode": null
+    },
+    {
+      "vInicial": "D",
+      "vFinal": "F",
+      "nomeAresta": "DF",
+      "guidCode": null
+    },
+    {
+      "vInicial": "C",
+      "vFinal": "G",
+      "nomeAresta": "CG",
+      "guidCode": null
+    },
+    {
+      "vInicial": "A",
+      "vFinal": "C",
+      "nomeAresta": "AC2",
+      "guidCode": null
+    },
+    {
+      "vInicial": "F",
+      "vFinal": "F",
+      "nomeAresta": "FF",
+      "guidCode": null
+    },
+    {
+      "vInicial": "D",
+      "vFinal": "F",
+      "nomeAresta": "DF2",
+      "guidCode": null
+    }
+  ]
 }
