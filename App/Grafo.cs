@@ -16,10 +16,6 @@ namespace GraphApp
         internal List<Aresta> arestas { get; set; }
         //internal Dictionary<Vertice, List<Aresta>> grafo { get; set; }
 
-        public Grafo()
-        {
-
-        }
 
         public Grafo(string nome)
         {
@@ -92,17 +88,16 @@ namespace GraphApp
 
                 foreach (Vertice v in this.getVerticesAdjacentes(vertice))
                 {
-                    // TODO: AB BC AC removendo A está removendo BC também
                     Aresta[] arestas = new Aresta[this.arestas.Count];
                     this.arestas.CopyTo(arestas);
                     foreach (Aresta a in arestas)
                     {
-                        if (a.vInicial.Equals(v))
+                        if (a.vInicial.Equals(v) && a.vFinal.Equals(vertice))
                         {
                             this.arestas.Remove(a);
                         }
 
-                        if (a.vFinal.Equals(v))
+                        if (a.vFinal.Equals(v) && a.vInicial.Equals(vertice))
                         {
                             this.arestas.Remove(a);
                         }
