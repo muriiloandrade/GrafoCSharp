@@ -76,14 +76,7 @@ namespace GraphApp
                     case "6":
                         Console.Write("Digite o nome do vértice que deseja conhecer os adjacentes: ");
                         List<Vertice> vAdj = null;
-                        if (g.dirigido)
-                        {
-                            vAdj = g.getVerticesAdjacentes(g.getVerticePorNome(Console.ReadLine()));
-                        }
-                        else
-                        {
-                            vAdj = g.getVerticesAdjacentesNaoPonderadoNaoDirigido(g.getVerticePorNome(Console.ReadLine()));
-                        }
+                        vAdj = g.getVerticesAdjacentes(g.getVerticePorNome(Console.ReadLine()));
                         Console.Write("Vértices adjacentes: ");
                         vAdj.ForEach(v => Console.Write(" " + v.nomeVertice));
                         Console.WriteLine();

@@ -16,7 +16,6 @@ namespace GraphApp
         internal List<Aresta> arestas { get; set; }
         //internal Dictionary<Vertice, List<Aresta>> grafo { get; set; }
 
-
         public Grafo(string nome)
         {
             this.nomeGrafo = nome;
@@ -183,44 +182,42 @@ namespace GraphApp
             #endregion lixo
         }
 
-        internal List<Vertice> getVerticesAdjacentesNaoPonderadoNaoDirigido(Vertice vertice)
-        {
-            var verticesAdjacentes = new List<Vertice>();
+        //internal List<Vertice> getVerticesAdjacentesNaoPonderadoNaoDirigido(Vertice vertice)
+        //{
+        //    var verticesAdjacentes = new List<Vertice>();
 
-            foreach (Aresta a in this.arestas)
-            {
-                if (a.vInicial.Equals(vertice) && !verticesAdjacentes.Contains(a.vFinal))
-                {
-                    verticesAdjacentes.Add(a.vFinal);
-                }
+        //    foreach (Aresta a in this.arestas)
+        //    {
+        //        if (a.vInicial.Equals(vertice) && !verticesAdjacentes.Contains(a.vFinal))
+        //        {
+        //            verticesAdjacentes.Add(a.vFinal);
+        //        }
 
-                if (a.vFinal.Equals(vertice) && !verticesAdjacentes.Contains(a.vInicial))
-                {
-                    verticesAdjacentes.Add(a.vInicial);
-                }
-            }
+        //        if (a.vFinal.Equals(vertice) && !verticesAdjacentes.Contains(a.vInicial))
+        //        {
+        //            verticesAdjacentes.Add(a.vInicial);
+        //        }
+        //    }
 
-            return verticesAdjacentes;
-            #region lixo
-            //foreach (var item in this.grafo)
-            //{
-            //    foreach (Aresta a in item.Value)
-            //    {
-            //        if (a.vInicial.Equals(vertice))
-            //        {
-            //            verticesAdjacentes.Add(a.vFinal);
-            //        }
+        //    return verticesAdjacentes;
+        //    #region lixo
+        //    //foreach (var item in this.grafo)
+        //    //{
+        //    //    foreach (Aresta a in item.Value)
+        //    //    {
+        //    //        if (a.vInicial.Equals(vertice))
+        //    //        {
+        //    //            verticesAdjacentes.Add(a.vFinal);
+        //    //        }
 
-            //        if (a.vFinal.Equals(vertice))
-            //        {
-            //            verticesAdjacentes.Add(a.vInicial);
-            //        }
-            //    }
-            //}
-            #endregion lixo
-        }
-
-
+        //    //        if (a.vFinal.Equals(vertice))
+        //    //        {
+        //    //            verticesAdjacentes.Add(a.vInicial);
+        //    //        }
+        //    //    }
+        //    //}
+        //    #endregion lixo
+        //}
 
         internal Vertice getVerticePorNome(String nomeVertice)
         {
@@ -301,12 +298,12 @@ namespace GraphApp
             return this.arestas.First(a => a.nomeAresta.Equals(nomeAresta, StringComparison.CurrentCultureIgnoreCase));
         }
 
-        private bool existsArestaEntreVertices(string nomeV1, string nomeV2)
+        private int existsArestaEntreVertices(string nomeV1, string nomeV2)
         {
             Vertice v1 = this.getVerticePorNome(nomeV1);
             Vertice v2 = this.getVerticePorNome(nomeV2);
 
-            return this.arestas.Exists(a => a.vInicial.Equals(v1) && a.vFinal.Equals(v2));
+            return this.arestas.Count(a => a.vInicial.Equals(v1) && a.vFinal.Equals(v2));
         }
         #endregion Arestas
 
@@ -314,7 +311,7 @@ namespace GraphApp
         internal void showMatrizAdjacenteDirigido()
         {
             int[,] matrix = new int[this.vertices.Count, this.vertices.Count];
-
+            
             Console.WriteLine("\n--------------- Matriz de Adjacência ---------------\n");
             Console.Write("   ");
             this.vertices.ForEach(v => Console.Write(v.nomeVertice + " "));
@@ -325,9 +322,9 @@ namespace GraphApp
                 Console.Write(this.vertices[i].nomeVertice + "| ");
                 for (int j = 0; j < this.vertices.Count; j++)
                 {
-                    if (this.existsArestaEntreVertices(this.vertices[i].nomeVertice, this.vertices[j].nomeVertice))
+                    if (this.existsArestaEntreVertices(this.vertices[i].nomeVertice, this.vertices[j].nomeVertice) > 0)
                     {
-                        matrix[i, j] = 1;
+                        matrix[i, j] = this.existsArestaEntreVertices(this.vertices[i].nomeVertice, this.vertices[j].nomeVertice);
                     }
 
                     Console.Write(matrix[i, j] + " ");
@@ -350,10 +347,10 @@ namespace GraphApp
                 Console.Write(this.vertices[i].nomeVertice + "| ");
                 for (int j = 0; j < this.vertices.Count; j++)
                 {
-                    if (this.existsArestaEntreVertices(this.vertices[i].nomeVertice, this.vertices[j].nomeVertice))
+                    if (this.existsArestaEntreVertices(this.vertices[i].nomeVertice, this.vertices[j].nomeVertice) > 0)
                     {
-                        matrix[i, j] = 1;
-                        matrix[j, i] = 1;
+                        matrix[i, j] = this.existsArestaEntreVertices(this.vertices[i].nomeVertice, this.vertices[j].nomeVertice);
+                        matrix[j, i] = this.existsArestaEntreVertices(this.vertices[i].nomeVertice, this.vertices[j].nomeVertice);
                     }
 
                     Console.Write(matrix[i, j] + " ");
