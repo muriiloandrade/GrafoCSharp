@@ -23,6 +23,10 @@ namespace GraphApp
                     "4 - Remover Aresta\n" +
                     "5 - Matriz\n" +
                     "6 - Exibir vértices adjacentes\n" +
+                    "7 - Testar existência de aresta entre 2 vértices\n" +
+                    "8 - Obter grau de um vértice\n" +
+                    "9 - Obter grau mínimo, médio e máximo\n" +
+                    "10 - É conexo?\n" +
                     "Escolha uma opção: ");
 
                 switch (Console.ReadLine())
@@ -80,6 +84,48 @@ namespace GraphApp
                         Console.Write("Vértices adjacentes: ");
                         vAdj.ForEach(v => Console.Write(" " + v.nomeVertice));
                         Console.WriteLine();
+                        Console.Write("Pressione qualquer tecla para continuar...");
+                        Console.ReadKey();
+                        Console.Clear();
+                        break;
+                    case "7":
+                        Console.Write("Digite o nome do vértice 1: ");
+                        var v1 = g.getVerticePorNome(Console.ReadLine());
+                        Console.Write("Digite o nome do vértice 2: ");
+                        var v2 = g.getVerticePorNome(Console.ReadLine());
+                        
+                        if (g.existsArestaEntreVertices(v1.nomeVertice, v2.nomeVertice) >= 2)
+                        {
+                            Console.WriteLine($"Existem {g.existsArestaEntreVertices(v1.nomeVertice, v2.nomeVertice)} arestas entre estes vértices!");
+                        }
+                        else if (g.existsArestaEntreVertices(v1.nomeVertice, v2.nomeVertice) == 1)
+                        {
+                            Console.WriteLine($"Existe {g.existsArestaEntreVertices(v1.nomeVertice, v2.nomeVertice)} aresta entre estes vértices!");
+                        }
+                        else
+                        {
+                            Console.WriteLine($"Não existem aresta entre estes vértices!");
+                        }
+                        Console.Write("Pressione qualquer tecla para continuar...");
+                        Console.ReadKey();
+                        Console.Clear();
+                        break;
+                    case "8":
+                        Console.Write("Digite o nome do vértice: ");
+                        Vertice ver = g.getVerticePorNome(Console.ReadLine());
+                        Console.WriteLine($"O grau do vértice é: {g.getGrauVertice(ver)}");
+                        Console.Write("Pressione qualquer tecla para continuar...");
+                        Console.ReadKey();
+                        Console.Clear();
+                        break;
+                    case "9":
+                        Console.WriteLine(g.getGrauMinMedMax());
+                        Console.Write("Pressione qualquer tecla para continuar...");
+                        Console.ReadKey();
+                        Console.Clear();
+                        break;
+                    case "10":
+                        Console.WriteLine("O grafo " + (g.isConexo() ? "é " : "não é ") + "conexo!");
                         Console.Write("Pressione qualquer tecla para continuar...");
                         Console.ReadKey();
                         Console.Clear();

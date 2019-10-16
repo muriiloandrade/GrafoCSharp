@@ -8,6 +8,8 @@ namespace GraphApp
 {
     class Aresta
     {
+        // TODO: Inserir um novo atributo "Peso" e
+        // Gerar um novo override em Equals para comparar os Pesos também
         internal Vertice vInicial;
         internal Vertice vFinal;
         internal Guid guidCode { get; set; }

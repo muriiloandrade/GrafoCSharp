@@ -14,7 +14,6 @@ namespace GraphApp
         internal Guid guidCode { get; set; }
         internal List<Vertice> vertices { get; set; }
         internal List<Aresta> arestas { get; set; }
-        //internal Dictionary<Vertice, List<Aresta>> grafo { get; set; }
 
         public Grafo(string nome)
         {
@@ -30,7 +29,6 @@ namespace GraphApp
             this.guidCode = Guid.NewGuid();
             this.vertices = new List<Vertice>();
             this.arestas = new List<Aresta>();
-            //this.grafo = new Dictionary<Vertice, List<Aresta>>();
         }
 
         public Grafo(App.GrafoJSON json, bool weighted, bool directed)
@@ -51,8 +49,12 @@ namespace GraphApp
             {
                 this.arestas.Add(new Aresta(new Vertice(a.vInicial), new Vertice(a.vFinal), a.nomeAresta));
             }
+        }
 
-            //this.grafo = new Dictionary<Vertice, List<Aresta>>();
+        internal bool isConexo()
+        {
+
+            return this.vertices.All(vertice => this.getVerticesAdjacentes(vertice).Count == (this.vertices.Count - 1));
         }
 
         #region Vertices
@@ -60,14 +62,12 @@ namespace GraphApp
         {
             try
             {
-                //if (this.grafo.ContainsKey(vertice))
                 if (this.vertices.Exists(v => v.nomeVertice.Equals(vertice.nomeVertice, StringComparison.CurrentCultureIgnoreCase)))
                 {
                     throw new Exception("O grafo já contém esse vértice!\nInsira outro!");
                 }
 
                 this.vertices.Add(vertice);
-                //this.grafo.Add(vertice, new List<Aresta>());
             }
             catch (Exception ex)
             {
@@ -79,7 +79,6 @@ namespace GraphApp
         {
             try
             {
-                //if (!this.grafo.ContainsKey(vertice))
                 if (!this.vertices.Contains(vertice))
                 {
                     throw new Exception("O grafo não contém este vértice!");
@@ -105,44 +104,54 @@ namespace GraphApp
 
                 this.vertices.Remove(vertice);
                 Console.WriteLine("Vértice " + vertice.nomeVertice + " excluído!");
-                #region lixo
-                //this.getVerticesAdjacentes(vertice).Where(verticeAdjacente =>
-                //{
-                //    this.grafo.Values.Where(arestas => arestas.Where(v => v.vInicial.Equals(verticeAdjacente) ||
-                //                                                      v.vFinal.Equals(verticeAdjacente)));
-                //});
-
-                //foreach (Vertice v in verticesAdjacentes)
-                //{
-                //var b = this.grafo.Values.AsEnumerable();
-                //}
-
-                //foreach (List<Aresta> arestas in this.grafo.Values)
-                //{
-                //    foreach (Aresta a in arestas)
-                //    {
-                //        foreach (Vertice v in verticesAdjacentes)
-                //        {
-                //            if (a.vInicial.Equals(v))
-                //            {
-                //                arestas.Remove(a);
-                //            }
-
-                //            if (a.vFinal.Equals(v))
-                //            {
-                //                arestas.Remove(a);
-                //            }
-                //        }
-                //    }
-                //}
-
-                //this.grafo.Remove(vertice);
-                #endregion lixo
             }
             catch (Exception ex)
             {
                 Console.WriteLine(ex.Message);
             }
+        }
+
+        internal bool existsCaminhoDeEuler()
+        {
+            return isConexo() && (getTodosOsGraus().Count(grau => grau % 2 != 0) == 0 || getTodosOsGraus().Count(grau => grau % 2 != 0) == 2);
+        }
+
+        internal string getGrauMinMedMax()
+        {
+            List<int> graus = getTodosOsGraus();
+
+            return "Grau mínimo: " + graus.Min() + "\n" +
+                   "Grau médio: " + graus.Average() + "\n" +
+                   "Grau máximo: " + graus.Max();
+        }
+
+        private List<int> getTodosOsGraus()
+        {
+            List<int> graus = new List<int>();
+            foreach (Vertice vertice in this.vertices)
+            {
+                graus.Add(getGrauVertice(vertice));
+            }
+
+            return graus;
+        }
+
+        internal int getGrauVertice(Vertice vertice)
+        {
+            int grau = 0;
+            foreach (Aresta a in this.arestas)
+            {
+                if (a.vInicial.Equals(vertice))
+                {
+                    grau++;
+                }
+
+                if (a.vFinal.Equals(vertice))
+                {
+                    grau++;
+                }
+            }
+            return grau;
         }
 
         internal List<Vertice> getVerticesAdjacentes(Vertice vertice)
@@ -163,61 +172,7 @@ namespace GraphApp
             }
 
             return verticesAdjacentes;
-            #region lixo
-            //foreach (var item in this.grafo)
-            //{
-            //    foreach (Aresta a in item.Value)
-            //    {
-            //        if (a.vInicial.Equals(vertice))
-            //        {
-            //            verticesAdjacentes.Add(a.vFinal);
-            //        }
-
-            //        if (a.vFinal.Equals(vertice))
-            //        {
-            //            verticesAdjacentes.Add(a.vInicial);
-            //        }
-            //    }
-            //}
-            #endregion lixo
         }
-
-        //internal List<Vertice> getVerticesAdjacentesNaoPonderadoNaoDirigido(Vertice vertice)
-        //{
-        //    var verticesAdjacentes = new List<Vertice>();
-
-        //    foreach (Aresta a in this.arestas)
-        //    {
-        //        if (a.vInicial.Equals(vertice) && !verticesAdjacentes.Contains(a.vFinal))
-        //        {
-        //            verticesAdjacentes.Add(a.vFinal);
-        //        }
-
-        //        if (a.vFinal.Equals(vertice) && !verticesAdjacentes.Contains(a.vInicial))
-        //        {
-        //            verticesAdjacentes.Add(a.vInicial);
-        //        }
-        //    }
-
-        //    return verticesAdjacentes;
-        //    #region lixo
-        //    //foreach (var item in this.grafo)
-        //    //{
-        //    //    foreach (Aresta a in item.Value)
-        //    //    {
-        //    //        if (a.vInicial.Equals(vertice))
-        //    //        {
-        //    //            verticesAdjacentes.Add(a.vFinal);
-        //    //        }
-
-        //    //        if (a.vFinal.Equals(vertice))
-        //    //        {
-        //    //            verticesAdjacentes.Add(a.vInicial);
-        //    //        }
-        //    //    }
-        //    //}
-        //    #endregion lixo
-        //}
 
         internal Vertice getVerticePorNome(String nomeVertice)
         {
@@ -231,18 +186,7 @@ namespace GraphApp
                 Console.WriteLine(ex.Message);
                 return null;
             }
-
-            #region lixo
-            //foreach (Vertice v in this.vertices)
-            //{
-            //    if (v.nomeVertice.Equals(nomeVertice, StringComparison.CurrentCultureIgnoreCase))
-            //    {
-            //        return v;
-            //    }
-            //}
-            #endregion lixo
         }
-
         #endregion Vertices
 
         #region Arestas
@@ -252,11 +196,6 @@ namespace GraphApp
             {
                 this.arestas.Add(aresta);
             }
-
-            #region lixo
-            //var vInicial = this.grafo.Keys.Where(v => v.Equals(aresta.vInicial));
-            //var vFinal = this.grafo.Keys.Where(v => v.Equals(aresta.vFinal));
-            #endregion lixo
         }
 
         internal void removeAresta(Aresta aresta)
@@ -298,7 +237,7 @@ namespace GraphApp
             return this.arestas.First(a => a.nomeAresta.Equals(nomeAresta, StringComparison.CurrentCultureIgnoreCase));
         }
 
-        private int existsArestaEntreVertices(string nomeV1, string nomeV2)
+        internal int existsArestaEntreVertices(string nomeV1, string nomeV2)
         {
             Vertice v1 = this.getVerticePorNome(nomeV1);
             Vertice v2 = this.getVerticePorNome(nomeV2);
@@ -311,7 +250,7 @@ namespace GraphApp
         internal void showMatrizAdjacenteDirigido()
         {
             int[,] matrix = new int[this.vertices.Count, this.vertices.Count];
-            
+
             Console.WriteLine("\n--------------- Matriz de Adjacência ---------------\n");
             Console.Write("   ");
             this.vertices.ForEach(v => Console.Write(v.nomeVertice + " "));
