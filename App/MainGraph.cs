@@ -50,8 +50,23 @@ namespace GraphApp
                         Vertice vInicial = g.getVerticePorNome(Console.ReadLine());
                         Console.Write("Digite o nome do vértice de destino: ");
                         Vertice vFinal = g.getVerticePorNome(Console.ReadLine());
+                        int weight = 0;
+                        if (g.ponderado)
+                        {
+                            Console.Write("Digite o peso da aresta: ");
+                            string peso = Console.ReadLine();
+                            weight = Convert.ToInt32(peso);
+                        }
                         Console.Write("Digite um nome para a aresta: ");
-                        g.addAresta(new Aresta(vInicial, vFinal, Console.ReadLine()));
+                        if (g.ponderado)
+                        {
+                            g.addAresta(new Aresta(vInicial, vFinal, Console.ReadLine(), weight));
+                        }
+                        else
+                        {
+                            g.addAresta(new Aresta(vInicial, vFinal, Console.ReadLine()));
+                        }
+
                         Console.Write("Pressione qualquer tecla para continuar...");
                         Console.ReadKey();
                         Console.Clear();
@@ -64,13 +79,27 @@ namespace GraphApp
                         Console.Clear();
                         break;
                     case "5":
-                        if (g.dirigido)
+                        if (g.ponderado)
                         {
-                            g.showMatrizAdjacenteDirigido();
+                            if (g.dirigido)
+                            {
+                                g.showMatrizAdjacentePonderadoDirigido();
+                            }
+                            else
+                            {
+                                g.showMatrizAdjacentePonderadoNaoDirigido();
+                            }
                         }
                         else
                         {
-                            g.showMatrizAdjacenteNaoDirigido();
+                            if (g.dirigido)
+                            {
+                                g.showMatrizAdjacenteDirigido();
+                            }
+                            else
+                            {
+                                g.showMatrizAdjacenteNaoDirigido();
+                            }
                         }
                         Console.WriteLine();
                         Console.Write("Pressione qualquer tecla para continuar...");
@@ -93,7 +122,7 @@ namespace GraphApp
                         var v1 = g.getVerticePorNome(Console.ReadLine());
                         Console.Write("Digite o nome do vértice 2: ");
                         var v2 = g.getVerticePorNome(Console.ReadLine());
-                        
+
                         if (g.existsArestaEntreVertices(v1.nomeVertice, v2.nomeVertice) >= 2)
                         {
                             Console.WriteLine($"Existem {g.existsArestaEntreVertices(v1.nomeVertice, v2.nomeVertice)} arestas entre estes vértices!");

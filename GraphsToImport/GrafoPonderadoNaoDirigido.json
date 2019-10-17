@@ -37,72 +37,84 @@
       "vInicial": "A",
       "vFinal": "C",
       "nomeAresta": "AC",
+      "peso": 5,
       "guidCode": null
     },
     {
       "vInicial": "B",
       "vFinal": "C",
       "nomeAresta": "BC",
+      "peso": 7,
       "guidCode": null
     },
     {
       "vInicial": "C",
       "vFinal": "B",
       "nomeAresta": "CB",
+      "peso": 8,
       "guidCode": null
     },
     {
       "vInicial": "A",
       "vFinal": "D",
       "nomeAresta": "AD",
+      "peso": 1,
       "guidCode": null
     },
     {
       "vInicial": "E",
       "vFinal": "D",
       "nomeAresta": "ED",
+      "peso": 17,
       "guidCode": null
     },
     {
       "vInicial": "D",
       "vFinal": "F",
       "nomeAresta": "DF",
+      "peso": 13,
       "guidCode": null
     },
     {
       "vInicial": "F",
       "vFinal": "G",
       "nomeAresta": "FG",
+      "peso": 15,
       "guidCode": null
     },
     {
       "vInicial": "D",
       "vFinal": "F",
       "nomeAresta": "DF",
+      "peso": 21,
       "guidCode": null
     },
     {
       "vInicial": "C",
       "vFinal": "G",
       "nomeAresta": "CG",
+      "peso": 19,
       "guidCode": null
     },
     {
       "vInicial": "A",
       "vFinal": "C",
       "nomeAresta": "AC2",
+      "peso": 34,
       "guidCode": null
     },
     {
       "vInicial": "F",
       "vFinal": "F",
       "nomeAresta": "FF",
+      "peso": 16,
       "guidCode": null
     },
     {
       "vInicial": "D",
       "vFinal": "F",
       "nomeAresta": "DF2",
+      "peso": 27,
       "guidCode": null
     }
   ]

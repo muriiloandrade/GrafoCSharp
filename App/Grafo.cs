@@ -34,9 +34,9 @@ namespace GraphApp
         public Grafo(App.GrafoJSON json, bool weighted, bool directed)
         {
             this.nomeGrafo = json.nomeGrafo;
-            this.guidCode = Guid.NewGuid();
             this.ponderado = weighted;
             this.dirigido = directed;
+            this.guidCode = Guid.NewGuid();
             this.vertices = new List<Vertice>();
             this.arestas = new List<Aresta>();
 
@@ -45,16 +45,41 @@ namespace GraphApp
                 this.vertices.Add(new Vertice(v.nomeVertice));
             }
 
-            foreach (var a in json.arestas)
+            if (weighted)
             {
-                this.arestas.Add(new Aresta(new Vertice(a.vInicial), new Vertice(a.vFinal), a.nomeAresta));
+                foreach (var a in json.arestas)
+                {
+                    this.arestas.Add(new Aresta(new Vertice(a.vInicial), new Vertice(a.vFinal), a.nomeAresta, a.peso));
+                }
+            }
+            else
+            {
+                foreach (var a in json.arestas)
+                {
+                    this.arestas.Add(new Aresta(new Vertice(a.vInicial), new Vertice(a.vFinal), a.nomeAresta));
+                }
+            }
+        }
+
+        private void buscaEmProfundidade(Vertice vertice)
+        {
+            List<Vertice> visited = new List<Vertice>();
+            visited.Add(vertice);
+
+            foreach (Vertice v in this.getVerticesAdjacentes(vertice))
+            {
+                if (!visited.Contains(v))
+                {
+                    buscaEmProfundidade(v);
+                }
+                    
             }
         }
 
         internal bool isConexo()
         {
 
-            return this.vertices.All(vertice => this.getVerticesAdjacentes(vertice).Count == (this.vertices.Count - 1));
+            return false;
         }
 
         #region Vertices
@@ -244,6 +269,14 @@ namespace GraphApp
 
             return this.arestas.Count(a => a.vInicial.Equals(v1) && a.vFinal.Equals(v2));
         }
+
+        internal Aresta existsArestaEntreVertices(string nomeV1, string nomeV2, bool weighted)
+        {
+            Vertice v1 = this.getVerticePorNome(nomeV1);
+            Vertice v2 = this.getVerticePorNome(nomeV2);
+
+            return this.arestas.First(a => a.vInicial.Equals(v1) && a.vFinal.Equals(v2));
+        }
         #endregion Arestas
 
         #region Matriz
@@ -252,13 +285,13 @@ namespace GraphApp
             int[,] matrix = new int[this.vertices.Count, this.vertices.Count];
 
             Console.WriteLine("\n--------------- Matriz de Adjacência ---------------\n");
-            Console.Write("   ");
-            this.vertices.ForEach(v => Console.Write(v.nomeVertice + " "));
+            Console.Write("    ");
+            this.vertices.ForEach(v => Console.Write(v.nomeVertice + "   "));
             Console.Write("\n");
 
             for (int i = 0; i < this.vertices.Count; i++)
             {
-                Console.Write(this.vertices[i].nomeVertice + "| ");
+                Console.Write(this.vertices[i].nomeVertice + "|");
                 for (int j = 0; j < this.vertices.Count; j++)
                 {
                     if (this.existsArestaEntreVertices(this.vertices[i].nomeVertice, this.vertices[j].nomeVertice) > 0)
@@ -266,7 +299,18 @@ namespace GraphApp
                         matrix[i, j] = this.existsArestaEntreVertices(this.vertices[i].nomeVertice, this.vertices[j].nomeVertice);
                     }
 
-                    Console.Write(matrix[i, j] + " ");
+                    if (matrix[i, j] < 10)
+                    {
+                        Console.Write("  " + matrix[i, j] + " ");
+                    }
+                    else if (matrix[i, j] >= 10)
+                    {
+                        Console.Write(" " + matrix[i, j] + " ");
+                    }
+                    else if (matrix[i, j] > 100)
+                    {
+                        Console.Write(" " + matrix[i, j]);
+                    }
                 }
                 Console.WriteLine();
             }
@@ -277,13 +321,13 @@ namespace GraphApp
             int[,] matrix = new int[this.vertices.Count, this.vertices.Count];
 
             Console.WriteLine("\n--------------- Matriz de Adjacência ---------------\n");
-            Console.Write("   ");
-            this.vertices.ForEach(v => Console.Write(v.nomeVertice + " "));
+            Console.Write("    ");
+            this.vertices.ForEach(v => Console.Write(v.nomeVertice + "   "));
             Console.Write("\n");
 
             for (int i = 0; i < this.vertices.Count; i++)
             {
-                Console.Write(this.vertices[i].nomeVertice + "| ");
+                Console.Write(this.vertices[i].nomeVertice + "|");
                 for (int j = 0; j < this.vertices.Count; j++)
                 {
                     if (this.existsArestaEntreVertices(this.vertices[i].nomeVertice, this.vertices[j].nomeVertice) > 0)
@@ -292,11 +336,97 @@ namespace GraphApp
                         matrix[j, i] = this.existsArestaEntreVertices(this.vertices[i].nomeVertice, this.vertices[j].nomeVertice);
                     }
 
-                    Console.Write(matrix[i, j] + " ");
+                    if (matrix[i, j] < 10)
+                    {
+                        Console.Write("  " + matrix[i, j] + " ");
+                    }
+                    else if (matrix[i, j] >= 10)
+                    {
+                        Console.Write(" " + matrix[i, j] + " ");
+                    }
+                    else if (matrix[i, j] > 100)
+                    {
+                        Console.Write(" " + matrix[i, j]);
+                    }
                 }
                 Console.WriteLine();
             }
         }
+
+        #region MatrizPonderada
+        internal void showMatrizAdjacentePonderadoDirigido()
+        {
+            int[,] matrix = new int[this.vertices.Count, this.vertices.Count];
+
+            Console.WriteLine("\n--------------- Matriz de Adjacência ---------------\n");
+            Console.Write("    ");
+            this.vertices.ForEach(v => Console.Write(v.nomeVertice + "   "));
+            Console.Write("\n");
+
+            for (int i = 0; i < this.vertices.Count; i++)
+            {
+                Console.Write(this.vertices[i].nomeVertice + "|");
+                for (int j = 0; j < this.vertices.Count; j++)
+                {
+                    if (this.existsArestaEntreVertices(this.vertices[i].nomeVertice, this.vertices[j].nomeVertice) > 0)
+                    {
+                        matrix[i, j] = this.existsArestaEntreVertices(this.vertices[i].nomeVertice, this.vertices[j].nomeVertice, this.ponderado).peso;
+                    }
+
+                    if(matrix[i, j] < 10)
+                    {
+                        Console.Write("  " + matrix[i, j] + " ");
+                    }
+                    else if(matrix[i,j] >= 10)
+                    {
+                        Console.Write(" " + matrix[i, j] + " ");
+                    }
+                    else if(matrix[i,j] > 100)
+                    {
+                        Console.Write(" " + matrix[i, j]);
+                    }
+                }
+                Console.WriteLine();
+            }
+        }
+
+        internal void showMatrizAdjacentePonderadoNaoDirigido()
+        {
+            int[,] matrix = new int[this.vertices.Count, this.vertices.Count];
+
+            Console.WriteLine("\n--------------- Matriz de Adjacência ---------------\n");
+            Console.Write("    ");
+            this.vertices.ForEach(v => Console.Write(v.nomeVertice + "   "));
+            Console.Write("\n");
+
+            for (int i = 0; i < this.vertices.Count; i++)
+            {
+                Console.Write(this.vertices[i].nomeVertice + "|");
+                for (int j = 0; j < this.vertices.Count; j++)
+                {
+                    if (this.existsArestaEntreVertices(this.vertices[i].nomeVertice, this.vertices[j].nomeVertice) > 0)
+                    {
+                        matrix[i, j] = this.existsArestaEntreVertices(this.vertices[i].nomeVertice, this.vertices[j].nomeVertice, this.ponderado).peso;
+                        matrix[j, i] = this.existsArestaEntreVertices(this.vertices[i].nomeVertice, this.vertices[j].nomeVertice, this.ponderado).peso;
+                    }
+                    
+                    if (matrix[i, j] < 10)
+                    {
+                        Console.Write("  " + matrix[i, j] + " ");
+                    }
+                    else if (matrix[i, j] >= 10)
+                    {
+                        Console.Write(" " + matrix[i, j] + " ");
+                    }
+                    else if (matrix[i, j] > 100)
+                    {
+                        Console.Write(" " + matrix[i, j]);
+                    }
+                }
+                Console.WriteLine();
+            }
+        }
+        #endregion MatrizPonderada
         #endregion Matriz
     }
 }

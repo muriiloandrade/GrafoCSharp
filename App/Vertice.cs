@@ -1,10 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
 
 namespace GraphApp
 {
     class Vertice
     {
+        internal int grau { get; set; }
         internal string nomeVertice { get; set; }
         internal Guid guidCode { get; set; }
 
@@ -35,6 +35,7 @@ namespace GraphApp
             var hashCode = -802182721;
             hashCode = hashCode * -1521134295 + nomeVertice.GetHashCode();
             hashCode = hashCode * -1521134295 + guidCode.GetHashCode();
+            hashCode = hashCode * -1521134295 + grau.GetHashCode();
             return hashCode;
         }
     }

@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace GraphApp.App
+﻿namespace GraphApp.App
 {
     public class GrafoJSON
     {
@@ -26,6 +20,7 @@ namespace GraphApp.App
         public string vInicial { get; set; }
         public string vFinal { get; set; }
         public string nomeAresta { get; set; }
+        public int peso { get; set; }
         public object guidCode { get; set; }
     }
 
