@@ -14,12 +14,7 @@ namespace GraphApp
         internal Guid guidCode { get; set; }
         internal List<Vertice> vertices { get; set; }
         internal List<Aresta> arestas { get; set; }
-
-        public Grafo(string nome)
-        {
-            this.nomeGrafo = nome;
-            this.guidCode = Guid.NewGuid();
-        }
+        internal LinkedList<Vertice>[] linkedlistVertices { get; set; }
 
         public Grafo(string nome, bool weighted, bool directed)
         {
@@ -29,6 +24,7 @@ namespace GraphApp
             this.guidCode = Guid.NewGuid();
             this.vertices = new List<Vertice>();
             this.arestas = new List<Aresta>();
+            this.linkedlistVertices = new LinkedList<Vertice>[this.vertices.Count];
         }
 
         public Grafo(App.GrafoJSON json, bool weighted, bool directed)
@@ -59,27 +55,74 @@ namespace GraphApp
                     this.arestas.Add(new Aresta(new Vertice(a.vInicial), new Vertice(a.vFinal), a.nomeAresta));
                 }
             }
+
+            this.linkedlistVertices = new LinkedList<Vertice>[this.vertices.Count];
+            for (int i = 0; i < this.vertices.Count; i++)
+            {
+                linkedlistVertices[i] = new LinkedList<Vertice>();
+            }
         }
 
-        private void buscaEmProfundidade(Vertice vertice)
+        private void buscaEmProfundidade(int index, bool[] visited)
         {
-            List<Vertice> visited = new List<Vertice>();
-            visited.Add(vertice);
+            visited[index] = true;
 
-            foreach (Vertice v in this.getVerticesAdjacentes(vertice))
+            var i = linkedlistVertices[index].GetEnumerator();
+            while (i.MoveNext())
             {
-                if (!visited.Contains(v))
+                int n = this.vertices.IndexOf(i.Current);
+                if (!visited[n])
                 {
-                    buscaEmProfundidade(v);
+                    buscaEmProfundidade(n, visited);
                 }
-                    
             }
         }
 
         internal bool isConexo()
         {
+            //Se o grafo não for importado, o número de vértices no momento da instanciação será 0.
+            //Portanto, para contornar esse problema, redeclare com a quantidade de vértices atual.
+            if (this.linkedlistVertices.Length != this.vertices.Count)
+            {
+                this.linkedlistVertices = new LinkedList<Vertice>[this.vertices.Count];
 
-            return false;
+                for (int i = 0; i < this.vertices.Count; i++)
+                {
+                    linkedlistVertices[i] = new LinkedList<Vertice>();
+                }
+            }
+
+            for (int i = 0; i < this.linkedlistVertices.Length; i++)
+            {
+                foreach (Vertice v in this.getVerticesAdjacentes(this.vertices[i]))
+                {
+                    if(!linkedlistVertices[i].Contains(v))
+                        linkedlistVertices[i].AddLast(v);
+                }
+            }
+
+            bool[] visited = new bool[this.vertices.Count];
+
+            int j;
+
+            for (j = 0; j < this.vertices.Count; j++)
+            {
+                if (linkedlistVertices[j].Count() == 0)
+                    return false;
+            }
+
+            if (j == this.vertices.Count)
+                return true;
+
+            buscaEmProfundidade(j, visited);
+
+            for (j = 0; j < this.vertices.Count; j++)
+            {
+                if (visited[j] == false && linkedlistVertices[j].Count() > 0)
+                    return false;
+            }
+
+            return true;
         }
 
         #region Vertices
@@ -373,15 +416,15 @@ namespace GraphApp
                         matrix[i, j] = this.existsArestaEntreVertices(this.vertices[i].nomeVertice, this.vertices[j].nomeVertice, this.ponderado).peso;
                     }
 
-                    if(matrix[i, j] < 10)
+                    if (matrix[i, j] < 10)
                     {
                         Console.Write("  " + matrix[i, j] + " ");
                     }
-                    else if(matrix[i,j] >= 10)
+                    else if (matrix[i, j] >= 10)
                     {
                         Console.Write(" " + matrix[i, j] + " ");
                     }
-                    else if(matrix[i,j] > 100)
+                    else if (matrix[i, j] > 100)
                     {
                         Console.Write(" " + matrix[i, j]);
                     }
@@ -409,7 +452,7 @@ namespace GraphApp
                         matrix[i, j] = this.existsArestaEntreVertices(this.vertices[i].nomeVertice, this.vertices[j].nomeVertice, this.ponderado).peso;
                         matrix[j, i] = this.existsArestaEntreVertices(this.vertices[i].nomeVertice, this.vertices[j].nomeVertice, this.ponderado).peso;
                     }
-                    
+
                     if (matrix[i, j] < 10)
                     {
                         Console.Write("  " + matrix[i, j] + " ");

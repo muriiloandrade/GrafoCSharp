@@ -2,9 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace GraphApp
 {
@@ -27,6 +25,7 @@ namespace GraphApp
                     "8 - Obter grau de um vértice\n" +
                     "9 - Obter grau mínimo, médio e máximo\n" +
                     "10 - É conexo?\n" +
+                    "11 - Existe caminho de Euler?\n" +
                     "Escolha uma opção: ");
 
                 switch (Console.ReadLine())
@@ -159,8 +158,17 @@ namespace GraphApp
                         Console.ReadKey();
                         Console.Clear();
                         break;
+                    case "11":
+                        Console.WriteLine("O grafo " + (g.existsCaminhoDeEuler() ? "possui " : "não possui ") + "caminho de Euler");
+                        Console.Write("Pressione qualquer tecla para continuar...");
+                        Console.ReadKey();
+                        Console.Clear();
+                        break;
                     default:
-                        Console.Write("Opção inválida!\nDigite uma opção válida: ");
+                        Console.Write("Opção inválida!\n");
+                        Console.Write("Pressione qualquer tecla para continuar...");
+                        Console.ReadKey();
+                        Console.Clear();
                         break;
                 }
             }
