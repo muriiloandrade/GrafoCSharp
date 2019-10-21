@@ -24,7 +24,6 @@ namespace GraphApp
             this.guidCode = Guid.NewGuid();
             this.vertices = new List<Vertice>();
             this.arestas = new List<Aresta>();
-            this.linkedlistVertices = new LinkedList<Vertice>[this.vertices.Count];
         }
 
         public Grafo(App.GrafoJSON json, bool weighted, bool directed)
@@ -55,12 +54,23 @@ namespace GraphApp
                     this.arestas.Add(new Aresta(new Vertice(a.vInicial), new Vertice(a.vFinal), a.nomeAresta));
                 }
             }
+        }
 
-            this.linkedlistVertices = new LinkedList<Vertice>[this.vertices.Count];
-            for (int i = 0; i < this.vertices.Count; i++)
+        #region Grafo
+        Grafo getGrafoInvertido()
+        {
+            Grafo g = new Grafo("Grafo invertido", false, this.dirigido);
+            this.newListaDeAdjacencias(g);
+
+            for (int v = 0; v < this.vertices.Count; v++)
             {
-                linkedlistVertices[i] = new LinkedList<Vertice>();
+                var i = linkedlistVertices[v].GetEnumerator();
+                while (i.MoveNext())
+                {
+                    g.linkedlistVertices[this.vertices.IndexOf(i.Current)].AddLast(this.vertices[v]);
+                }
             }
+            return g;
         }
 
         private void buscaEmProfundidade(int index, bool[] visited)
@@ -73,33 +83,15 @@ namespace GraphApp
                 int n = this.vertices.IndexOf(i.Current);
                 if (!visited[n])
                 {
-                    buscaEmProfundidade(n, visited);
+                    this.buscaEmProfundidade(n, visited);
                 }
             }
         }
 
         internal bool isConexo()
         {
-            //Se o grafo não for importado, o número de vértices no momento da instanciação será 0.
-            //Portanto, para contornar esse problema, redeclare com a quantidade de vértices atual.
-            if (this.linkedlistVertices.Length != this.vertices.Count)
-            {
-                this.linkedlistVertices = new LinkedList<Vertice>[this.vertices.Count];
-
-                for (int i = 0; i < this.vertices.Count; i++)
-                {
-                    linkedlistVertices[i] = new LinkedList<Vertice>();
-                }
-            }
-
-            for (int i = 0; i < this.linkedlistVertices.Length; i++)
-            {
-                foreach (Vertice v in this.getVerticesAdjacentes(this.vertices[i]))
-                {
-                    if(!linkedlistVertices[i].Contains(v))
-                        linkedlistVertices[i].AddLast(v);
-                }
-            }
+            this.newListaDeAdjacencias(this);
+            this.fillListaDeAdjacencias(this);
 
             bool[] visited = new bool[this.vertices.Count];
 
@@ -107,14 +99,16 @@ namespace GraphApp
 
             for (j = 0; j < this.vertices.Count; j++)
             {
+                //Se alguma lista de adjacência não possuir itens, o grafo não é conexo
                 if (linkedlistVertices[j].Count() == 0)
                     return false;
+
+                //Acha um vértice com grau > 0
+                if (linkedlistVertices[j].Count() > 0)
+                    break;
             }
 
-            if (j == this.vertices.Count)
-                return true;
-
-            buscaEmProfundidade(j, visited);
+            this.buscaEmProfundidade(j, visited);
 
             for (j = 0; j < this.vertices.Count; j++)
             {
@@ -125,6 +119,67 @@ namespace GraphApp
             return true;
         }
 
+        internal bool isFortementeConexo()
+        {
+            this.newListaDeAdjacencias(this);
+            this.fillListaDeAdjacencias(this);
+
+            bool[] visited = new bool[this.vertices.Count];
+
+            this.buscaEmProfundidade(0, visited);
+
+            //Se a busca não visitar todos os vértices, não é fortemente conexo
+            for (int i = 0; i < this.vertices.Count; i++)
+            {
+                if (visited[i] == false)
+                    return false;
+            }
+
+            //Cria um grafo invertido
+            Grafo grafoInvertido = getGrafoInvertido();
+            
+            //Reseta o array de visitados para a busca em profundidade do grafo invertido
+            for (int i = 0; i < this.vertices.Count; i++)
+            {
+                visited[i] = false;
+            }
+
+            grafoInvertido.buscaEmProfundidade(0, visited);
+
+            //Se a busca não visitar todos os vértices, não é fortemente conexo
+            for (int i = 0; i < this.vertices.Count; i++)
+            {
+                if (visited[i] == false)
+                    return false;
+            }
+
+            return true;
+        }
+
+        private void newListaDeAdjacencias(Grafo g)
+        {
+            //Instancia uma nova lista encadeada para a lista encadeada de cada vértice do grafo
+            g.linkedlistVertices = new LinkedList<Vertice>[this.vertices.Count];
+
+            for (int i = 0; i < this.vertices.Count; i++)
+            {
+                g.linkedlistVertices[i] = new LinkedList<Vertice>();
+            }
+        }
+
+        private void fillListaDeAdjacencias(Grafo g)
+        {
+            for (int i = 0; i < g.linkedlistVertices.Length; i++)
+            {
+                foreach (Vertice v in this.getVerticesAdjacentes(this.vertices[i]))
+                {
+                    if (!g.linkedlistVertices[i].Contains(v))
+                        g.linkedlistVertices[i].AddLast(v);
+                }
+            }
+        }
+        #endregion Grafo
+
         #region Vertices
         internal void addVertice(Vertice vertice)
         {
@@ -132,7 +187,7 @@ namespace GraphApp
             {
                 if (this.vertices.Exists(v => v.nomeVertice.Equals(vertice.nomeVertice, StringComparison.CurrentCultureIgnoreCase)))
                 {
-                    throw new Exception("O grafo já contém esse vértice!\nInsira outro!");
+                    throw new Exception("O grafo já contém esse vértice, insira outro!");
                 }
 
                 this.vertices.Add(vertice);

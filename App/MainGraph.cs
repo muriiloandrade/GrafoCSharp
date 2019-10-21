@@ -153,7 +153,14 @@ namespace GraphApp
                         Console.Clear();
                         break;
                     case "10":
-                        Console.WriteLine("O grafo " + (g.isConexo() ? "é " : "não é ") + "conexo!");
+                        if (g.dirigido)
+                        {
+                            Console.WriteLine("O grafo " + (g.isFortementeConexo() ? "é " : "não é ") + "conexo!");
+                        }
+                        else
+                        {
+                            Console.WriteLine("O grafo " + (g.isConexo() ? "é " : "não é ") + "conexo!");
+                        }
                         Console.Write("Pressione qualquer tecla para continuar...");
                         Console.ReadKey();
                         Console.Clear();
