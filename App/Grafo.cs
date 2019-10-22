@@ -61,6 +61,8 @@ namespace GraphApp
         {
             Grafo g = new Grafo("Grafo invertido", false, this.dirigido);
             this.newListaDeAdjacencias(g);
+            this.arestas.ForEach(a => g.arestas.Add(a));
+            this.vertices.ForEach(v => g.vertices.Add(v));
 
             for (int v = 0; v < this.vertices.Count; v++)
             {
@@ -137,7 +139,7 @@ namespace GraphApp
 
             //Cria um grafo invertido
             Grafo grafoInvertido = getGrafoInvertido();
-            
+
             //Reseta o array de visitados para a busca em profundidade do grafo invertido
             for (int i = 0; i < this.vertices.Count; i++)
             {
@@ -173,7 +175,7 @@ namespace GraphApp
             {
                 foreach (Vertice v in this.getVerticesAdjacentes(this.vertices[i]))
                 {
-                    if (!g.linkedlistVertices[i].Contains(v))
+                    if (!g.linkedlistVertices[i].Contains(v) && this.arestas.Any(a => a.vInicial.Equals(this.vertices[i]) && a.vFinal.Equals(v)))
                         g.linkedlistVertices[i].AddLast(v);
                 }
             }
@@ -236,7 +238,7 @@ namespace GraphApp
 
         internal bool existsCaminhoDeEuler()
         {
-            return isConexo() && (getTodosOsGraus().Count(grau => grau % 2 != 0) == 0 || getTodosOsGraus().Count(grau => grau % 2 != 0) == 2);
+            return (this.dirigido ? isFortementeConexo() : isConexo()) && (getTodosOsGraus().Count(grau => grau % 2 != 0) == 0 || getTodosOsGraus().Count(grau => grau % 2 != 0) == 2);
         }
 
         internal string getGrauMinMedMax()
