@@ -90,6 +90,20 @@ namespace GraphApp
             }
         }
 
+        private void warshall(int[,] matrix)
+        {
+            for (int k = 0; k < this.vertices.Count; k++)
+            {
+                for (int i = 0; i < this.vertices.Count; i++)
+                {
+                    for (int j = 0; j < this.vertices.Count; j++)
+                    {
+                        matrix[i, j] = Math.Max(matrix[i, j], (Math.Min(matrix[i, k], matrix[k, j])));
+                    }
+                }
+            }
+        }
+
         internal bool isConexo()
         {
             this.newListaDeAdjacencias(this);
@@ -359,10 +373,26 @@ namespace GraphApp
 
         internal Aresta getArestaPorNome(string nomeAresta)
         {
-            return this.arestas.First(a => a.nomeAresta.Equals(nomeAresta, StringComparison.CurrentCultureIgnoreCase));
+            try
+            {
+                return this.arestas.First(a => a.nomeAresta.Equals(nomeAresta, StringComparison.CurrentCultureIgnoreCase));
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                return null;
+            }
         }
 
-        internal int existsArestaEntreVertices(string nomeV1, string nomeV2)
+        internal bool existsArestaEntreVertices(string nomeV1, string nomeV2)
+        {
+            Vertice v1 = this.getVerticePorNome(nomeV1);
+            Vertice v2 = this.getVerticePorNome(nomeV2);
+
+            return this.arestas.Exists(a => a.vInicial.Equals(v1) && a.vFinal.Equals(v2));
+        }
+
+        internal int howManyArestaEntreVertices(string nomeV1, string nomeV2)
         {
             Vertice v1 = this.getVerticePorNome(nomeV1);
             Vertice v2 = this.getVerticePorNome(nomeV2);
@@ -380,6 +410,39 @@ namespace GraphApp
         #endregion Arestas
 
         #region Matriz
+        internal void showMatrizDeAcessibilidade()
+        {
+            int[,] matrix = new int[this.vertices.Count, this.vertices.Count];
+            
+            Console.WriteLine("\n--------------- Matriz de Acessibilidade ---------------\n");
+            Console.Write("   ");
+            this.vertices.ForEach(v => Console.Write(v.nomeVertice + "  "));
+            Console.Write("\n");
+
+            for (int i = 0; i < this.vertices.Count; i++)
+            {
+                for (int j = 0; j < this.vertices.Count; j++)
+                {
+                    if (this.existsArestaEntreVertices(this.vertices[i].nomeVertice, this.vertices[j].nomeVertice))
+                    {
+                        matrix[i, j] = 1;
+                    }
+                }
+            }
+
+            warshall(matrix);
+
+            for (int i = 0; i < this.vertices.Count; i++)
+            {
+                Console.Write(this.vertices[i].nomeVertice + "| ");
+                for (int j = 0; j < this.vertices.Count; j++)
+                {
+                    Console.Write(matrix[i, j] + "  ");
+                }
+                Console.WriteLine();
+            }
+        }
+
         internal void showMatrizAdjacenteDirigido()
         {
             int[,] matrix = new int[this.vertices.Count, this.vertices.Count];
@@ -394,9 +457,9 @@ namespace GraphApp
                 Console.Write(this.vertices[i].nomeVertice + "|");
                 for (int j = 0; j < this.vertices.Count; j++)
                 {
-                    if (this.existsArestaEntreVertices(this.vertices[i].nomeVertice, this.vertices[j].nomeVertice) > 0)
+                    if (this.howManyArestaEntreVertices(this.vertices[i].nomeVertice, this.vertices[j].nomeVertice) > 0)
                     {
-                        matrix[i, j] = this.existsArestaEntreVertices(this.vertices[i].nomeVertice, this.vertices[j].nomeVertice);
+                        matrix[i, j] = this.howManyArestaEntreVertices(this.vertices[i].nomeVertice, this.vertices[j].nomeVertice);
                     }
 
                     if (matrix[i, j] < 10)
@@ -430,10 +493,10 @@ namespace GraphApp
                 Console.Write(this.vertices[i].nomeVertice + "|");
                 for (int j = 0; j < this.vertices.Count; j++)
                 {
-                    if (this.existsArestaEntreVertices(this.vertices[i].nomeVertice, this.vertices[j].nomeVertice) > 0)
+                    if (this.howManyArestaEntreVertices(this.vertices[i].nomeVertice, this.vertices[j].nomeVertice) > 0)
                     {
-                        matrix[i, j] = this.existsArestaEntreVertices(this.vertices[i].nomeVertice, this.vertices[j].nomeVertice);
-                        matrix[j, i] = this.existsArestaEntreVertices(this.vertices[i].nomeVertice, this.vertices[j].nomeVertice);
+                        matrix[i, j] = this.howManyArestaEntreVertices(this.vertices[i].nomeVertice, this.vertices[j].nomeVertice);
+                        matrix[j, i] = this.howManyArestaEntreVertices(this.vertices[i].nomeVertice, this.vertices[j].nomeVertice);
                     }
 
                     if (matrix[i, j] < 10)
@@ -468,7 +531,7 @@ namespace GraphApp
                 Console.Write(this.vertices[i].nomeVertice + "|");
                 for (int j = 0; j < this.vertices.Count; j++)
                 {
-                    if (this.existsArestaEntreVertices(this.vertices[i].nomeVertice, this.vertices[j].nomeVertice) > 0)
+                    if (this.howManyArestaEntreVertices(this.vertices[i].nomeVertice, this.vertices[j].nomeVertice) > 0)
                     {
                         matrix[i, j] = this.existsArestaEntreVertices(this.vertices[i].nomeVertice, this.vertices[j].nomeVertice, this.ponderado).peso;
                     }
@@ -504,7 +567,7 @@ namespace GraphApp
                 Console.Write(this.vertices[i].nomeVertice + "|");
                 for (int j = 0; j < this.vertices.Count; j++)
                 {
-                    if (this.existsArestaEntreVertices(this.vertices[i].nomeVertice, this.vertices[j].nomeVertice) > 0)
+                    if (this.howManyArestaEntreVertices(this.vertices[i].nomeVertice, this.vertices[j].nomeVertice) > 0)
                     {
                         matrix[i, j] = this.existsArestaEntreVertices(this.vertices[i].nomeVertice, this.vertices[j].nomeVertice, this.ponderado).peso;
                         matrix[j, i] = this.existsArestaEntreVertices(this.vertices[i].nomeVertice, this.vertices[j].nomeVertice, this.ponderado).peso;
