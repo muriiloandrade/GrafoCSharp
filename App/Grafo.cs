@@ -194,6 +194,53 @@ namespace GraphApp
                 }
             }
         }
+
+        internal void dijkstra(int[,] matrix, int indiceVerticeInicial, int indiceVerticeFinal)
+        {
+            int nVertices = matrix.Length;
+
+            int[] menoresDistancias = new int[nVertices];
+
+            bool[] adicionado = new bool[nVertices];
+
+            for (int i = 0; i < nVertices; i++)
+            {
+                menoresDistancias[i] = int.MaxValue;
+                adicionado[i] = false;
+            }
+
+            menoresDistancias[indiceVerticeInicial] = 0;
+
+            int[] pais = new int[nVertices];
+
+            pais[indiceVerticeInicial] = -1;
+
+            int verticeMaisProximo = -1;
+            int menorDistancia = int.MaxValue;
+            for (int i = 0; i < nVertices; i++)
+            {
+                if (!adicionado[i] && menoresDistancias[i] < menorDistancia)
+                {
+                    verticeMaisProximo = i;
+                    menorDistancia = menoresDistancias[i];
+                }
+            }
+
+            adicionado[verticeMaisProximo] = true;
+
+            for (int i = 0; i < nVertices; i++)
+            {
+                int pesoAresta = matrix[verticeMaisProximo, i];
+
+                if (pesoAresta > 0 && ((menorDistancia + pesoAresta) < menoresDistancias[i]))
+                {
+                    pais[i] = verticeMaisProximo;
+                    menoresDistancias[i] = menorDistancia + pesoAresta;
+                }
+            }
+
+            showSolucaoDijkstra(indiceVerticeInicial, indiceVerticeFinal, menorDistancia, pais);
+        }
         #endregion Grafo
 
         #region Vertices
@@ -383,7 +430,7 @@ namespace GraphApp
                 return null;
             }
         }
-
+        
         internal bool existsArestaEntreVertices(string nomeV1, string nomeV2)
         {
             Vertice v1 = this.getVerticePorNome(nomeV1);
@@ -588,6 +635,32 @@ namespace GraphApp
                 }
                 Console.WriteLine();
             }
+        }
+
+        private void showSolucaoDijkstra(int source, int destination, int pesoTotal, int[] pais)
+        {
+            Console.Write("Vértice\t Peso\tCaminho");
+
+            for (int i = 0; i < this.vertices.Count(); i++)
+            {
+                if (i != source)
+                {
+                    Console.Write("\n" + source + " -> ");
+                    Console.Write(i + " \t\t ");
+                    Console.Write(pesoTotal + "\t\t");
+                    printCaminho(i, pais);
+                }
+            }
+        }
+
+        private void printCaminho(int verticeAtual, int[] pais)
+        {
+            if (verticeAtual == -1)
+            {
+                return;
+            }
+            printCaminho(pais[verticeAtual], pais);
+            Console.Write(verticeAtual + " ");
         }
         #endregion MatrizPonderada
         #endregion Matriz
