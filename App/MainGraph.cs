@@ -27,6 +27,7 @@ namespace GraphApp
                     "10 - É conexo?\n" +
                     "11 - Existe caminho de Euler?\n" +
                     "12 - Matriz de Acessibilidade\n" +
+                    "13 - Dijkstra\n" +
                     "Escolha uma opção: ");
 
                 switch (Console.ReadLine())
@@ -123,13 +124,13 @@ namespace GraphApp
                         Console.Write("Digite o nome do vértice 2: ");
                         var v2 = g.getVerticePorNome(Console.ReadLine());
 
-                        if (g.howManyArestaEntreVertices(v1.nomeVertice, v2.nomeVertice) >= 2)
+                        if (g.howManyArestasEntreVertices(v1.nomeVertice, v2.nomeVertice) >= 2)
                         {
-                            Console.WriteLine($"Existem {g.howManyArestaEntreVertices(v1.nomeVertice, v2.nomeVertice)} arestas entre estes vértices!");
+                            Console.WriteLine($"Existem {g.howManyArestasEntreVertices(v1.nomeVertice, v2.nomeVertice)} arestas entre estes vértices!");
                         }
-                        else if (g.howManyArestaEntreVertices(v1.nomeVertice, v2.nomeVertice) == 1)
+                        else if (g.howManyArestasEntreVertices(v1.nomeVertice, v2.nomeVertice) == 1)
                         {
-                            Console.WriteLine($"Existe {g.howManyArestaEntreVertices(v1.nomeVertice, v2.nomeVertice)} aresta entre estes vértices!");
+                            Console.WriteLine($"Existe {g.howManyArestasEntreVertices(v1.nomeVertice, v2.nomeVertice)} aresta entre estes vértices!");
                         }
                         else
                         {
@@ -174,6 +175,17 @@ namespace GraphApp
                         break;
                     case "12":
                         g.showMatrizDeAcessibilidade();
+                        Console.Write("Pressione qualquer tecla para continuar...");
+                        Console.ReadKey();
+                        Console.Clear();
+                        break;
+                    case "13":
+                        Console.Write("Digite o nome do vértice 1: ");
+                        var s = g.getVerticePorNome(Console.ReadLine());
+                        Console.Write("Digite o nome do vértice 2: ");
+                        var d = g.getVerticePorNome(Console.ReadLine());
+                        
+                        g.dijkstra(g.vertices.IndexOf(s), g.vertices.IndexOf(d));
                         Console.Write("Pressione qualquer tecla para continuar...");
                         Console.ReadKey();
                         Console.Clear();
