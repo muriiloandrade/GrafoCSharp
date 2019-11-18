@@ -196,12 +196,15 @@ namespace GraphApp
         internal void dijkstra(int indiceVerticeInicial, int indiceVerticeFinal)
         {
             int[,] matrix = new int[this.vertices.Count, this.vertices.Count];
+            int nVertices = this.vertices.Count;
 
             //Preenche a matriz com os pesos das arestas
-            for (int i = 0; i < this.vertices.Count; i++)
+            for (int i = 0; i < nVertices; i++)
             {
-                for (int j = 0; j < this.vertices.Count; j++)
+                for (int j = 0; j < nVertices; j++)
                 {
+                    matrix[i, j] = int.MaxValue;
+
                     if (this.existsArestaEntreVertices(this.vertices[i].nomeVertice, this.vertices[j].nomeVertice))
                     {
                         matrix[i, j] = this.getArestaEntreVertices(this.vertices[i].nomeVertice, this.vertices[j].nomeVertice).peso;
@@ -209,7 +212,97 @@ namespace GraphApp
                 }
             }
 
+            // Vértices que já foram percorridos
+            List<Vertice> IN = new List<Vertice>
+            {
+                this.vertices[indiceVerticeInicial]
+            };
+
+            // Vetor de índice de vértices, distância até o inicial usando vértices de IN
+            int[] d = new int[nVertices];
+
+            // Vetor de índice de vértices, contém o indice do vértice anterior no caminho mínimo
+            int[] s = new int[nVertices];
+
+            d[indiceVerticeInicial] = 0;
+
+            // Para todo vértice z não pertencente a IN faça
+            foreach (var z in this.vertices.Where(v => IN.All(inV => inV.nomeVertice != v.nomeVertice)))
+            {
+                d[this.vertices.IndexOf(z)] = matrix[indiceVerticeInicial, this.vertices.IndexOf(z)];
+                s[this.vertices.IndexOf(z)] = indiceVerticeInicial;
+            }
+
+            // Enquanto o vértice final não pertencer a IN
+            while (!IN.Contains(this.vertices[indiceVerticeFinal]))
+            {
+                //pesos = contém os pesos até os vértices que não estão em IN
+                List<int> pesos = new List<int>();
+                foreach (var z in this.vertices.Where(v => !IN.Contains(v)))
+                {
+                    if (this.arestas.Exists(a => (a.vInicial.Equals(IN.Last()) &&
+                                                  a.vFinal.Equals(z)) ||
+                                                 (a.vFinal.Equals(IN.Last()) &&
+                                                  a.vInicial.Equals(z))))
+                    {
+                        pesos.Add(this.arestas.First(a => (a.vInicial.Equals(IN.Last()) &&
+                                                           a.vFinal.Equals(z)) ||
+                                                          (a.vFinal.Equals(IN.Last()) &&
+                                                           a.vInicial.Equals(z))).peso);
+                    }
+                }
+
+                Vertice p;
+                if (IN.Contains(this.arestas.First(a => (a.vInicial.nomeVertice.Equals(IN.Last().nomeVertice) || a.vFinal.nomeVertice.Equals(IN.Last().nomeVertice) && !IN.Contains(a.vInicial)) && a.peso == pesos.Min()).vFinal))
+                {
+                    p = this.arestas.First(a => (a.vInicial.nomeVertice.Equals(IN.Last().nomeVertice) || a.vFinal.nomeVertice.Equals(IN.Last().nomeVertice) && !IN.Contains(a.vInicial)) && a.peso == pesos.Min()).vInicial;
+                }
+                else
+                {
+                    p = this.arestas.First(a => (a.vInicial.nomeVertice.Equals(IN.Last().nomeVertice) || a.vFinal.nomeVertice.Equals(IN.Last().nomeVertice) && !IN.Contains(a.vInicial)) && a.peso == pesos.Min()).vFinal;
+                }
+
+                //IN = IN U {p}
+                IN.Add(p);
+
+                var indiceDoVerticeP = this.vertices.IndexOf(p);
+                foreach (var z in this.vertices.Where(v => IN.All(inV => inV.nomeVertice != v.nomeVertice)))
+                {
+                    var indiceDoVerticeZ = this.vertices.IndexOf(z);
+                    var distanciaAnterior = d[indiceDoVerticeZ];
+                    d[indiceDoVerticeZ] = Math.Min(distanciaAnterior, d[indiceDoVerticeP] + matrix[indiceDoVerticeP, indiceDoVerticeZ]);
+                    if (d[indiceDoVerticeZ] != distanciaAnterior)
+                    {
+                        s[indiceDoVerticeZ] = indiceDoVerticeP;
+                    }
+                }
+            }
+            Console.Write(indiceVerticeFinal + "\t");
+            var foo = indiceVerticeFinal;
+            do
+            {
+                Console.Write(s[foo]);
+                foo = s[foo];
+            } while (foo == indiceVerticeInicial);
+            Console.WriteLine($"\nA distância mínima é: {d[indiceVerticeInicial]}");
+        }
+
+        internal void bellmanFord(int indiceVerticeInicial)
+        {
+            int[,] matrix = new int[this.vertices.Count, this.vertices.Count];
             int nVertices = this.vertices.Count;
+
+            //Preenche a matriz com os pesos das arestas
+            for (int i = 0; i < nVertices; i++)
+            {
+                for (int j = 0; j < nVertices; j++)
+                {
+                    if (this.existsArestaEntreVertices(this.vertices[i].nomeVertice, this.vertices[j].nomeVertice))
+                    {
+                        matrix[i, j] = this.getArestaEntreVertices(this.vertices[i].nomeVertice, this.vertices[j].nomeVertice).peso;
+                    }
+                }
+            }
 
             int[] menoresDistancias = new int[nVertices];
 
@@ -253,9 +346,10 @@ namespace GraphApp
                     }
                 }
             }
-            showSolucaoDijkstra(indiceVerticeInicial, indiceVerticeFinal, menoresDistancias, pais);
+            showSolucaoBellmanFord(indiceVerticeInicial, menoresDistancias, pais);
         }
         #endregion Grafo
+
 
         #region Vertices
         internal void addVertice(Vertice vertice)
@@ -515,14 +609,20 @@ namespace GraphApp
 
             for (int i = 0; i < this.vertices.Count; i++)
             {
-                Console.Write(this.vertices[i].nomeVertice + "|");
                 for (int j = 0; j < this.vertices.Count; j++)
                 {
                     if (this.howManyArestasEntreVertices(this.vertices[i].nomeVertice, this.vertices[j].nomeVertice) > 0)
                     {
                         matrix[i, j] = this.howManyArestasEntreVertices(this.vertices[i].nomeVertice, this.vertices[j].nomeVertice);
                     }
+                }
+            }
 
+            for (int i = 0; i < this.vertices.Count; i++)
+            {
+                Console.Write(this.vertices[i].nomeVertice + "|");
+                for (int j = 0; j < this.vertices.Count; j++)
+                {
                     if (matrix[i, j] < 10)
                     {
                         Console.Write("  " + matrix[i, j] + " ");
@@ -551,7 +651,6 @@ namespace GraphApp
 
             for (int i = 0; i < this.vertices.Count; i++)
             {
-                Console.Write(this.vertices[i].nomeVertice + "|");
                 for (int j = 0; j < this.vertices.Count; j++)
                 {
                     if (this.howManyArestasEntreVertices(this.vertices[i].nomeVertice, this.vertices[j].nomeVertice) > 0)
@@ -559,7 +658,14 @@ namespace GraphApp
                         matrix[i, j] = this.howManyArestasEntreVertices(this.vertices[i].nomeVertice, this.vertices[j].nomeVertice);
                         matrix[j, i] = this.howManyArestasEntreVertices(this.vertices[i].nomeVertice, this.vertices[j].nomeVertice);
                     }
+                }
+            }
 
+            for (int i = 0; i < this.vertices.Count; i++)
+            {
+                Console.Write(this.vertices[i].nomeVertice + "|");
+                for (int j = 0; j < this.vertices.Count; j++)
+                {
                     if (matrix[i, j] < 10)
                     {
                         Console.Write("  " + matrix[i, j] + " ");
@@ -589,14 +695,20 @@ namespace GraphApp
 
             for (int i = 0; i < this.vertices.Count; i++)
             {
-                Console.Write(this.vertices[i].nomeVertice + "|");
                 for (int j = 0; j < this.vertices.Count; j++)
                 {
                     if (this.howManyArestasEntreVertices(this.vertices[i].nomeVertice, this.vertices[j].nomeVertice) > 0)
                     {
                         matrix[i, j] = this.getArestaEntreVertices(this.vertices[i].nomeVertice, this.vertices[j].nomeVertice).peso;
                     }
+                }
+            }
 
+            for (int i = 0; i < this.vertices.Count; i++)
+            {
+                Console.Write(this.vertices[i].nomeVertice + "|");
+                for (int j = 0; j < this.vertices.Count; j++)
+                {
                     if (matrix[i, j] < 10)
                     {
                         Console.Write("  " + matrix[i, j] + " ");
@@ -625,7 +737,6 @@ namespace GraphApp
 
             for (int i = 0; i < this.vertices.Count; i++)
             {
-                Console.Write(this.vertices[i].nomeVertice + "|");
                 for (int j = 0; j < this.vertices.Count; j++)
                 {
                     if (this.howManyArestasEntreVertices(this.vertices[i].nomeVertice, this.vertices[j].nomeVertice) > 0)
@@ -633,7 +744,14 @@ namespace GraphApp
                         matrix[i, j] = this.getArestaEntreVertices(this.vertices[i].nomeVertice, this.vertices[j].nomeVertice).peso;
                         matrix[j, i] = this.getArestaEntreVertices(this.vertices[i].nomeVertice, this.vertices[j].nomeVertice).peso;
                     }
+                }
+            }
 
+            for (int i = 0; i < this.vertices.Count; i++)
+            {
+                Console.Write(this.vertices[i].nomeVertice + "|");
+                for (int j = 0; j < this.vertices.Count; j++)
+                {
                     if (matrix[i, j] < 10)
                     {
                         Console.Write("  " + matrix[i, j] + " ");
@@ -651,19 +769,16 @@ namespace GraphApp
             }
         }
 
-        private void showSolucaoDijkstra(int source, int destination, int[] pesosTotais, int[] pais)
+        private void showSolucaoBellmanFord(int source, int[] pesosTotais, int[] pais)
         {
             Console.Write("Vértice\t Distância\tCaminho");
 
             for (int i = 0; i < this.vertices.Count(); i++)
             {
-                if (i != source && i == destination)
-                {
-                    Console.Write("\n" + this.vertices[source].nomeVertice + " -> ");
-                    Console.Write(this.vertices[i].nomeVertice + " \t ");
-                    Console.Write(pesosTotais[i] + "\t");
-                    printCaminho(i, pais);
-                }
+                Console.Write("\n" + this.vertices[source].nomeVertice + " -> ");
+                Console.Write(this.vertices[i].nomeVertice + " \t ");
+                Console.Write(pesosTotais[i] + "\t\t");
+                printCaminho(i, pais);
             }
             Console.WriteLine();
         }

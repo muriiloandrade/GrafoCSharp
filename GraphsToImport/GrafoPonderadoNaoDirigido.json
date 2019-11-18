@@ -5,116 +5,80 @@
   "vertices": [
     {
       "guidCode": null,
-      "nomeVertice": "A"
+      "nomeVertice": "X"
     },
     {
       "guidCode": null,
-      "nomeVertice": "B"
+      "nomeVertice": "1"
     },
     {
       "guidCode": null,
-      "nomeVertice": "C"
+      "nomeVertice": "2"
     },
     {
       "guidCode": null,
-      "nomeVertice": "D"
+      "nomeVertice": "3"
     },
     {
       "guidCode": null,
-      "nomeVertice": "E"
-    },
-    {
-      "guidCode": null,
-      "nomeVertice": "F"
-    },
-    {
-      "guidCode": null,
-      "nomeVertice": "G"
+      "nomeVertice": "Y"
     }
   ],
   "arestas": [
     {
-      "vInicial": "A",
-      "vFinal": "C",
-      "nomeAresta": "AC",
-      "peso": 5,
-      "guidCode": null
-    },
-    {
-      "vInicial": "B",
-      "vFinal": "C",
-      "nomeAresta": "BC",
-      "peso": 7,
-      "guidCode": null
-    },
-    {
-      "vInicial": "C",
-      "vFinal": "B",
-      "nomeAresta": "CB",
-      "peso": 8,
-      "guidCode": null
-    },
-    {
-      "vInicial": "A",
-      "vFinal": "D",
-      "nomeAresta": "AD",
+      "vInicial": "X",
+      "vFinal": "1",
+      "nomeAresta": "X1",
       "peso": 1,
       "guidCode": null
     },
     {
-      "vInicial": "E",
-      "vFinal": "D",
-      "nomeAresta": "ED",
-      "peso": 17,
+      "vInicial": "1",
+      "vFinal": "2",
+      "nomeAresta": "12",
+      "peso": 3,
       "guidCode": null
     },
     {
-      "vInicial": "D",
-      "vFinal": "F",
-      "nomeAresta": "DF",
-      "peso": 13,
+      "vInicial": "2",
+      "vFinal": "Y",
+      "nomeAresta": "2Y",
+      "peso": 2,
       "guidCode": null
     },
     {
-      "vInicial": "F",
-      "vFinal": "G",
-      "nomeAresta": "FG",
-      "peso": 15,
+      "vInicial": "3",
+      "vFinal": "Y",
+      "nomeAresta": "3Y",
+      "peso": 3,
       "guidCode": null
     },
     {
-      "vInicial": "D",
-      "vFinal": "F",
-      "nomeAresta": "DF",
-      "peso": 21,
+      "vInicial": "X",
+      "vFinal": "3",
+      "nomeAresta": "X3",
+      "peso": 4,
       "guidCode": null
     },
     {
-      "vInicial": "C",
-      "vFinal": "G",
-      "nomeAresta": "CG",
-      "peso": 19,
+      "vInicial": "1",
+      "vFinal": "3",
+      "nomeAresta": "13",
+      "peso": 1,
       "guidCode": null
     },
     {
-      "vInicial": "A",
-      "vFinal": "C",
-      "nomeAresta": "AC2",
-      "peso": 34,
+      "vInicial": "1",
+      "vFinal": "Y",
+      "nomeAresta": "1Y",
+      "peso": 5,
       "guidCode": null
     },
     {
-      "vInicial": "F",
-      "vFinal": "F",
-      "nomeAresta": "FF",
-      "peso": 16,
-      "guidCode": null
-    },
-    {
-      "vInicial": "D",
-      "vFinal": "F",
-      "nomeAresta": "DF2",
-      "peso": 27,
+      "vInicial": "3",
+      "vFinal": "2",
+      "nomeAresta": "32",
+      "peso": 2,
       "guidCode": null
     }
   ]
