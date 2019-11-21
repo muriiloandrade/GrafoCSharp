@@ -27,7 +27,8 @@ namespace GraphApp
                     "10 - É conexo?\n" +
                     "11 - Existe caminho de Euler?\n" +
                     "12 - Matriz de Acessibilidade\n" +
-                    "13 - Bellman-Ford\n" +
+                    "13 - Dijkstra\n" +
+                    "14 - Bellman-Ford\n" +
                     "Escolha uma opção: ");
 
                 switch (Console.ReadLine())
@@ -182,7 +183,17 @@ namespace GraphApp
                     case "13":
                         Console.Write("Digite o nome do vértice 1: ");
                         var s = g.getVerticePorNome(Console.ReadLine());
-                        g.bellmanFord(g.vertices.IndexOf(s));
+                        Console.Write("Digite o nome do vértice 2: ");
+                        var d = g.getVerticePorNome(Console.ReadLine());
+                        g.dijkstra(g.vertices.IndexOf(s),g.vertices.IndexOf(d));
+                        Console.Write("Pressione qualquer tecla para continuar...");
+                        Console.ReadKey();
+                        Console.Clear();
+                        break;
+                    case "14":
+                        Console.Write("Digite o nome do vértice 1: ");
+                        var source = g.getVerticePorNome(Console.ReadLine());
+                        g.bellmanFord(g.vertices.IndexOf(source));
                         Console.Write("Pressione qualquer tecla para continuar...");
                         Console.ReadKey();
                         Console.Clear();

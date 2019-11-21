@@ -277,14 +277,14 @@ namespace GraphApp
                     }
                 }
             }
-            Console.Write(indiceVerticeFinal + "\t");
+            Console.Write("Caminho: " + this.vertices[indiceVerticeFinal].nomeVertice);
             var foo = indiceVerticeFinal;
             do
             {
-                Console.Write(s[foo]);
+                Console.Write(this.vertices[s[foo]].nomeVertice);
                 foo = s[foo];
-            } while (foo == indiceVerticeInicial);
-            Console.WriteLine($"\nA distância mínima é: {d[indiceVerticeInicial]}");
+            } while (foo != indiceVerticeInicial);
+            Console.WriteLine($"\nA distância mínima é: {d[indiceVerticeFinal]}");
         }
 
         internal void bellmanFord(int indiceVerticeInicial)
