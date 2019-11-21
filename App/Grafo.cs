@@ -88,6 +88,23 @@ namespace GraphApp
             }
         }
 
+        private void floyd(int[,] matrix)
+        {
+            for (int k = 0; k < this.vertices.Count; k++)
+            {
+                for (int i = 0; i < this.vertices.Count; i++)
+                {
+                    for (int j = 0; j < this.vertices.Count; j++)
+                    {
+                        if (matrix[i, k] + matrix[k, j] < matrix[i, j])
+                        {
+                            matrix[i, j] = matrix[i, k] + matrix[k, j];
+                        }
+                    }
+                }
+            }
+        }
+
         private void warshall(int[,] matrix)
         {
             for (int k = 0; k < this.vertices.Count; k++)
@@ -350,7 +367,6 @@ namespace GraphApp
         }
         #endregion Grafo
 
-
         #region Vertices
         internal void addVertice(Vertice vertice)
         {
@@ -593,6 +609,61 @@ namespace GraphApp
                 for (int j = 0; j < this.vertices.Count; j++)
                 {
                     Console.Write(matrix[i, j] + "  ");
+                }
+                Console.WriteLine();
+            }
+        }
+
+        internal void showMatrizDeCaminhosMínimos()
+        {
+            int[,] matrix = new int[this.vertices.Count, this.vertices.Count];
+
+            Console.WriteLine("\n--------------- Matriz de Caminhos Mínimos ---------------\n");
+            Console.Write("    ");
+            this.vertices.ForEach(v => Console.Write(v.nomeVertice + "   "));
+            Console.Write("\n");
+
+            for (int i = 0; i < this.vertices.Count; i++)
+            {
+                for (int j = 0; j < this.vertices.Count; j++)
+                {
+                    if (i == j)
+                    {
+                        matrix[i, j] = 0;
+                    }
+                    else
+                    {
+                        if (this.existsArestaEntreVertices(this.vertices[i].nomeVertice, this.vertices[j].nomeVertice))
+                        {
+                            matrix[i, j] = this.getArestaEntreVertices(this.vertices[i].nomeVertice, this.vertices[j].nomeVertice).peso;
+                        }
+                        else
+                        {
+                            matrix[i, j] = 999;
+                        }
+                    }
+                }
+            }
+
+            floyd(matrix);
+
+            for (int i = 0; i < this.vertices.Count; i++)
+            {
+                Console.Write(this.vertices[i].nomeVertice + "|");
+                for (int j = 0; j < this.vertices.Count; j++)
+                {
+                    if (matrix[i, j] < 10)
+                    {
+                        Console.Write("  " + matrix[i, j] + " ");
+                    }
+                    else if (matrix[i, j] >= 10)
+                    {
+                        Console.Write(matrix[i, j] + " ");
+                    }
+                    else if (matrix[i, j] > 100)
+                    {
+                        Console.Write(matrix[i, j]);
+                    }
                 }
                 Console.WriteLine();
             }

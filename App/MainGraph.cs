@@ -26,9 +26,10 @@ namespace GraphApp
                     "9 - Obter grau mínimo, médio e máximo\n" +
                     "10 - É conexo?\n" +
                     "11 - Existe caminho de Euler?\n" +
-                    "12 - Matriz de Acessibilidade\n" +
+                    "12 - Matriz de Acessibilidade (Warshall)\n" +
                     "13 - Dijkstra\n" +
                     "14 - Bellman-Ford\n" +
+                    "15 - Matriz de Caminhos Mínimos\n" +
                     "Escolha uma opção: ");
 
                 switch (Console.ReadLine())
@@ -194,6 +195,12 @@ namespace GraphApp
                         Console.Write("Digite o nome do vértice 1: ");
                         var source = g.getVerticePorNome(Console.ReadLine());
                         g.bellmanFord(g.vertices.IndexOf(source));
+                        Console.Write("Pressione qualquer tecla para continuar...");
+                        Console.ReadKey();
+                        Console.Clear();
+                        break;
+                    case "15":
+                        g.showMatrizDeCaminhosMínimos();
                         Console.Write("Pressione qualquer tecla para continuar...");
                         Console.ReadKey();
                         Console.Clear();
