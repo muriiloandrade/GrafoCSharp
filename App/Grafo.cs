@@ -88,6 +88,39 @@ namespace GraphApp
             }
         }
 
+        private int buscaEmProfundidade(int index)
+        {
+            // Busca em profundidade iterativa usando pilha
+            int cont = 0;
+            bool[] visited = new bool[this.vertices.Count];
+            Stack<int> stack = new Stack<int>();
+
+            stack.Push(index);
+
+            while (stack.Count > 0)
+            {
+                index = stack.Peek();
+                stack.Pop();
+                cont += 1;
+                if (visited[index] == false)
+                {
+                    visited[index] = true;
+                }
+
+                var i = linkedlistVertices[index].GetEnumerator();
+
+                while (i.MoveNext())
+                {
+                    Vertice v = i.Current;
+                    if (!visited[this.vertices.IndexOf(v)])
+                    {
+                        stack.Push(this.vertices.IndexOf(v));
+                    }
+                }
+            }
+            return cont;
+        }
+
         private void floyd(int[,] matrix)
         {
             for (int k = 0; k < this.vertices.Count; k++)
@@ -206,6 +239,22 @@ namespace GraphApp
                 {
                     if (!g.linkedlistVertices[i].Contains(v) && this.arestas.Any(a => a.vInicial.Equals(this.vertices[i]) && a.vFinal.Equals(v)))
                         g.linkedlistVertices[i].AddLast(v);
+                }
+            }
+        }
+
+        private void fillListaDeAdjacenciasNaoDirigido(Grafo g)
+        {
+            for (int i = 0; i < g.linkedlistVertices.Length; i++)
+            {
+                foreach (Vertice v in this.getVerticesAdjacentes(this.vertices[i]))
+                {
+                    if (!g.linkedlistVertices[i].Contains(v) &&
+                        this.arestas.Any(a => (a.vInicial.Equals(this.vertices[i]) || a.vFinal.Equals(this.vertices[i]))
+                                                            && (a.vFinal.Equals(v) || a.vInicial.Equals(v))))
+                    {
+                        g.linkedlistVertices[i].AddLast(v);
+                    }
                 }
             }
         }
@@ -364,6 +413,42 @@ namespace GraphApp
                 }
             }
             showSolucaoBellmanFord(indiceVerticeInicial, menoresDistancias, pais);
+        }
+
+        internal int numberDeComponentesConectados()
+        {
+            this.newListaDeAdjacencias(this);
+            this.fillListaDeAdjacenciasNaoDirigido(this);
+
+            bool[] visited = new bool[this.vertices.Count];
+
+            int nComponents = 0;
+
+            for (int i = 0; i < this.vertices.Count; i++)
+            {
+                if (visited[i] == false)
+                {
+                    buscaEmProfundidade(i, visited);
+                    nComponents += 1;
+                }
+            }
+
+            return nComponents;
+        }
+
+        internal int numberDeVerticesMaiorComponenteConectados()
+        {
+            this.newListaDeAdjacencias(this);
+            this.fillListaDeAdjacenciasNaoDirigido(this);
+
+            List<int> qtdVertices = new List<int>();
+            
+            for (int i = 0; i < this.vertices.Count; i++)
+            {
+                qtdVertices.Add(buscaEmProfundidade(i));
+            }
+
+            return qtdVertices.Max();
         }
         #endregion Grafo
 

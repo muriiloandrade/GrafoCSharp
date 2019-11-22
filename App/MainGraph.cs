@@ -29,7 +29,9 @@ namespace GraphApp
                     "12 - Matriz de Acessibilidade (Warshall)\n" +
                     "13 - Dijkstra\n" +
                     "14 - Bellman-Ford\n" +
-                    "15 - Matriz de Caminhos Mínimos\n" +
+                    "15 - Matriz de Caminhos Mínimos (Floyd)\n" +
+                    "16 - Número de componentes conectados\n" +
+                    "17 - Número de vértices no maior componente conectado\n" +
                     "Escolha uma opção: ");
 
                 switch (Console.ReadLine())
@@ -201,6 +203,18 @@ namespace GraphApp
                         break;
                     case "15":
                         g.showMatrizDeCaminhosMínimos();
+                        Console.Write("Pressione qualquer tecla para continuar...");
+                        Console.ReadKey();
+                        Console.Clear();
+                        break;
+                    case "16":
+                        Console.WriteLine($"Número de componentes conectados: " + g.numberDeComponentesConectados());
+                        Console.Write("Pressione qualquer tecla para continuar...");
+                        Console.ReadKey();
+                        Console.Clear();
+                        break;
+                    case "17":
+                        Console.WriteLine($"Número de vértices no maior componente conectado: " + g.numberDeVerticesMaiorComponenteConectados());
                         Console.Write("Pressione qualquer tecla para continuar...");
                         Console.ReadKey();
                         Console.Clear();
