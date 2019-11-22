@@ -10,6 +10,8 @@ namespace GraphApp
         internal bool ponderado { get; set; }
         internal bool dirigido { get; set; }
         internal Guid guidCode { get; set; }
+        internal int ite { get; set; }
+        internal int comp { get; set; }
         internal List<Vertice> vertices { get; set; }
         internal List<Aresta> arestas { get; set; }
         internal LinkedList<Vertice>[] linkedlistVertices { get; set; }
@@ -129,10 +131,12 @@ namespace GraphApp
                 {
                     for (int j = 0; j < this.vertices.Count; j++)
                     {
+                        this.ite++;
                         if (matrix[i, k] + matrix[k, j] < matrix[i, j])
                         {
                             matrix[i, j] = matrix[i, k] + matrix[k, j];
                         }
+                        this.comp++;
                     }
                 }
             }
@@ -261,8 +265,10 @@ namespace GraphApp
 
         internal void dijkstra(int indiceVerticeInicial, int indiceVerticeFinal)
         {
-            int[,] matrix = new int[this.vertices.Count, this.vertices.Count];
             int nVertices = this.vertices.Count;
+            this.ite = 0;
+            this.comp = 0;
+            int[,] matrix = new int[nVertices, nVertices];
 
             //Preenche a matriz com os pesos das arestas
             for (int i = 0; i < nVertices; i++)
@@ -295,6 +301,7 @@ namespace GraphApp
             // Para todo vértice z não pertencente a IN faça
             foreach (var z in this.vertices.Where(v => IN.All(inV => inV.nomeVertice != v.nomeVertice)))
             {
+                this.ite++;
                 d[this.vertices.IndexOf(z)] = matrix[indiceVerticeInicial, this.vertices.IndexOf(z)];
                 s[this.vertices.IndexOf(z)] = indiceVerticeInicial;
             }
@@ -306,6 +313,7 @@ namespace GraphApp
                 List<int> pesos = new List<int>();
                 foreach (var z in this.vertices.Where(v => !IN.Contains(v)))
                 {
+                    this.ite++;
                     if (this.arestas.Exists(a => (a.vInicial.Equals(IN.Last()) &&
                                                   a.vFinal.Equals(z)) ||
                                                  (a.vFinal.Equals(IN.Last()) &&
@@ -316,6 +324,7 @@ namespace GraphApp
                                                           (a.vFinal.Equals(IN.Last()) &&
                                                            a.vInicial.Equals(z))).peso);
                     }
+                    this.comp++;
                 }
 
                 Vertice p;
@@ -327,6 +336,7 @@ namespace GraphApp
                 {
                     p = this.arestas.First(a => (a.vInicial.nomeVertice.Equals(IN.Last().nomeVertice) || a.vFinal.nomeVertice.Equals(IN.Last().nomeVertice) && !IN.Contains(a.vInicial)) && a.peso == pesos.Min()).vFinal;
                 }
+                this.comp++;
 
                 //IN = IN U {p}
                 IN.Add(p);
@@ -334,15 +344,19 @@ namespace GraphApp
                 var indiceDoVerticeP = this.vertices.IndexOf(p);
                 foreach (var z in this.vertices.Where(v => IN.All(inV => inV.nomeVertice != v.nomeVertice)))
                 {
+                    this.ite++;
                     var indiceDoVerticeZ = this.vertices.IndexOf(z);
                     var distanciaAnterior = d[indiceDoVerticeZ];
                     d[indiceDoVerticeZ] = Math.Min(distanciaAnterior, d[indiceDoVerticeP] + matrix[indiceDoVerticeP, indiceDoVerticeZ]);
+                    this.comp++;
                     if (d[indiceDoVerticeZ] != distanciaAnterior)
                     {
                         s[indiceDoVerticeZ] = indiceDoVerticeP;
                     }
+                    this.comp++;
                 }
             }
+
             Console.Write("Caminho: " + this.vertices[indiceVerticeFinal].nomeVertice);
             var foo = indiceVerticeFinal;
             do
@@ -350,13 +364,14 @@ namespace GraphApp
                 Console.Write(this.vertices[s[foo]].nomeVertice);
                 foo = s[foo];
             } while (foo != indiceVerticeInicial);
-            Console.WriteLine($"\nA distância mínima é: {d[indiceVerticeFinal]}");
+            Console.WriteLine($"\nA distância mínima é: {d[indiceVerticeFinal]}\nNúmero de comparações: {comp}\nNúmero de iterações: {ite}");
         }
 
         internal void bellmanFord(int indiceVerticeInicial)
         {
-            int[,] matrix = new int[this.vertices.Count, this.vertices.Count];
+            this.comp = 0; this.ite = 0;
             int nVertices = this.vertices.Count;
+            int[,] matrix = new int[nVertices, nVertices];
 
             //Preenche a matriz com os pesos das arestas
             for (int i = 0; i < nVertices; i++)
@@ -376,6 +391,7 @@ namespace GraphApp
 
             for (int i = 0; i < nVertices; i++)
             {
+                this.ite++;
                 menoresDistancias[i] = int.MaxValue;
                 adicionado[i] = false;
             }
@@ -392,17 +408,20 @@ namespace GraphApp
                 int menorDistancia = int.MaxValue;
                 for (int i = 0; i < nVertices; i++)
                 {
+                    this.ite++;
                     if (!adicionado[i] && menoresDistancias[i] < menorDistancia)
                     {
                         verticeMaisProximo = i;
                         menorDistancia = menoresDistancias[i];
                     }
+                    this.comp++;
                 }
 
                 adicionado[verticeMaisProximo] = true;
 
                 for (int i = 0; i < nVertices; i++)
                 {
+                    this.ite++;
                     int pesoAresta = matrix[verticeMaisProximo, i];
 
                     if (pesoAresta > 0 && ((menorDistancia + pesoAresta) < menoresDistancias[i]))
@@ -410,6 +429,7 @@ namespace GraphApp
                         pais[i] = verticeMaisProximo;
                         menoresDistancias[i] = menorDistancia + pesoAresta;
                     }
+                    this.comp++;
                 }
             }
             showSolucaoBellmanFord(indiceVerticeInicial, menoresDistancias, pais);
@@ -442,7 +462,7 @@ namespace GraphApp
             this.fillListaDeAdjacenciasNaoDirigido(this);
 
             List<int> qtdVertices = new List<int>();
-            
+
             for (int i = 0; i < this.vertices.Count; i++)
             {
                 qtdVertices.Add(buscaEmProfundidade(i));
@@ -702,12 +722,13 @@ namespace GraphApp
         internal void showMatrizDeCaminhosMínimos()
         {
             int[,] matrix = new int[this.vertices.Count, this.vertices.Count];
-
+            this.ite = 0; this.comp = 0;
             Console.WriteLine("\n--------------- Matriz de Caminhos Mínimos ---------------\n");
             Console.Write("    ");
             this.vertices.ForEach(v => Console.Write(v.nomeVertice + "   "));
             Console.Write("\n");
 
+            // Preenchimento da matriz
             for (int i = 0; i < this.vertices.Count; i++)
             {
                 for (int j = 0; j < this.vertices.Count; j++)
@@ -750,8 +771,10 @@ namespace GraphApp
                         Console.Write(matrix[i, j]);
                     }
                 }
+
                 Console.WriteLine();
             }
+            Console.WriteLine($"\nNúmero de comparações: {this.comp}\nNúmero de iterações: {this.ite}");
         }
 
         internal void showMatrizAdjacenteDirigido()
@@ -936,7 +959,7 @@ namespace GraphApp
                 Console.Write(pesosTotais[i] + "\t\t");
                 printCaminho(i, pais);
             }
-            Console.WriteLine();
+            Console.WriteLine($"\nNúmero de comparações: {this.comp}\nNúmero de iterações: {this.ite}");
         }
 
         private void printCaminho(int verticeAtual, int[] pais)
