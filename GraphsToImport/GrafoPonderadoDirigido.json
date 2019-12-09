@@ -72,6 +72,7 @@
       "vInicial": "D",
       "vFinal": "F",
       "nomeAresta": "DF",
+      "peso": 9,
       "guidCode": null
     },
     {
@@ -82,38 +83,10 @@
       "guidCode": null
     },
     {
-      "vInicial": "D",
-      "vFinal": "F",
-      "nomeAresta": "DF",
-      "peso": 11,
-      "guidCode": null
-    },
-    {
       "vInicial": "C",
       "vFinal": "G",
       "nomeAresta": "CG",
       "peso": 9,
-      "guidCode": null
-    },
-    {
-      "vInicial": "A",
-      "vFinal": "C",
-      "nomeAresta": "AC2",
-      "peso": 1,
-      "guidCode": null
-    },
-    {
-      "vInicial": "F",
-      "vFinal": "F",
-      "nomeAresta": "FF",
-      "peso": 12,
-      "guidCode": null
-    },
-    {
-      "vInicial": "D",
-      "vFinal": "F",
-      "nomeAresta": "DF2",
-      "peso": 2,
       "guidCode": null
     }
   ]

@@ -103,10 +103,10 @@ namespace GraphApp
             {
                 index = stack.Peek();
                 stack.Pop();
-                cont += 1;
                 if (visited[index] == false)
                 {
                     visited[index] = true;
+                    cont += 1;
                 }
 
                 var i = linkedlistVertices[index].GetEnumerator();

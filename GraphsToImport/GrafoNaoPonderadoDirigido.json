@@ -76,12 +76,6 @@
       "guidCode": null
     },
     {
-      "vInicial": "D",
-      "vFinal": "F",
-      "nomeAresta": "DF",
-      "guidCode": null
-    },
-    {
       "vInicial": "C",
       "vFinal": "G",
       "nomeAresta": "CG",
